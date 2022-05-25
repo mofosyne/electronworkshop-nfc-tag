@@ -63,7 +63,6 @@ Card Emulation (HCE) are not supported within the current scope.
     ChromeSamples.setStatus("Web NFC is not available. Use Chrome on Android.");
 
   ////////////////////////////////////////
-  var lastSerialID = "";
   var serialID = "";
   var forceWrite = false;
 
@@ -94,7 +93,6 @@ Card Emulation (HCE) are not supported within the current scope.
         log(`> ------------------- WRITING -----------------------`);
         log("> Written " + urlStr);
         console.log("NFC tag written.");
-        lastSerialID = serialID;
         serialID = "";
 
         forceWrite = false;
@@ -120,12 +118,11 @@ Card Emulation (HCE) are not supported within the current scope.
       });
 
       ndef.addEventListener("reading", ({ message, serialNumber }) => {
-        if (lastSerialID != serialNumber)
+        if (serialID != serialNumber)
         {
           log(`> ----------------- READING -----------------------`);
-          log(`> Serial Number: ${serialNumber} (last ID: ${lastSerialID})`);
+          log(`> Serial Number: ${serialNumber}`);
           log(`> Records: (${message.records.length})`);
-          serialID = serialNumber;
           const decoder = new TextDecoder();
           for (const record of message.records) {
             switch (record.recordType) {
@@ -149,18 +146,19 @@ Card Emulation (HCE) are not supported within the current scope.
                 log("readLog", `Record not handled`);
             }
           }
-          if (forceWrite || (message.records.length == 0))
+        }
+        serialID = serialNumber;
+        if (forceWrite || (message.records.length == 0))
+        {
+          if (forceWrite)
           {
-            if (forceWrite)
-            {
-              log(`> Forcing Write`);
-            }
-            writeRequest();
+            log(`> Forcing Write`);
           }
-          else
-          {
-            log(`> Tag Not Empty`);
-          }
+          writeRequest();
+        }
+        else
+        {
+          log(`> Tag Not Empty`);
         }
       });
     } catch (error) {
