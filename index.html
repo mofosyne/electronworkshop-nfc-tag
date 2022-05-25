@@ -14,13 +14,8 @@ format. Low-level I/O operations (e.g. ISO-DEP, NFC-A/B, NFC-F) and Host-based
 Card Emulation (HCE) are not supported within the current scope.
 </p>
 
-<button id="createElectronWorkshopTag">Create Electron Workshop Tag</button>
-
-<!--
-<button id="scanButton">Scan</button>
-<button id="writeButton">Write</button>
-<button id="makeReadOnlyButton">Make Read-Only</button>
--->
+<button id="scanTag">ScanTag</button>
+<button id="writeTag">WriteTag</button>
 
 <h3>Live Output</h3>
 <div id="output" class="output">
@@ -30,6 +25,12 @@ Card Emulation (HCE) are not supported within the current scope.
 </div>
 
 <script>
+    function uuidv4() {
+      return ([1e7]+-1e3+-4e3+-8e3+-1e11).replace(/[018]/g, c =>
+        (c ^ crypto.getRandomValues(new Uint8Array(1))[0] & 15 >> c / 4).toString(16)
+      );
+    }
+
     var ChromeSamples = {
       log: function() {
         var line = Array.prototype.slice.call(arguments).map(function(argument) {
@@ -61,43 +62,10 @@ Card Emulation (HCE) are not supported within the current scope.
   if (!("NDEFReader" in window))
     ChromeSamples.setStatus("Web NFC is not available. Use Chrome on Android.");
 
-  createElectronWorkshopTag.addEventListener("click", async () => {
-    try {
-      const ndef = new NDEFReader();
-      log("> Scan started");
-      await ndef.scan();
+  ////////////////////////////////////////
+  var serialID = "";
 
-      ndef.addEventListener("readingerror", () => {
-        log("Argh! Cannot read data from the NFC tag. Try another one?");
-      });
-
-      serialID = "";
-
-      ndef.addEventListener("reading", ({ message, serialNumber }) => {
-        log(`> Serial Number: ${serialNumber}`);
-        log(`> Records: (${message.records.length})`);
-        serialID = serialNumber;
-      });
-
-      await ndef.write({
-          records: [
-            {
-              recordType: "url",
-              data: "https://electronworkshop.com.au/?utype=nfc&uid="+serialID
-            },
-            {
-              recordType: "text", data: "Electron Workshop - Tech Collective"
-            }
-          ]
-        });
-      console.log("NFC tag written.");
-
-    } catch (error) {
-      log("Argh! " + error);
-    }
-  });
-
-  scanButton.addEventListener("click", async () => {
+  scanTag.addEventListener("click", async () => {
     log("User clicked scan button");
 
     try {
@@ -112,35 +80,40 @@ Card Emulation (HCE) are not supported within the current scope.
       ndef.addEventListener("reading", ({ message, serialNumber }) => {
         log(`> Serial Number: ${serialNumber}`);
         log(`> Records: (${message.records.length})`);
+        serialID = serialNumber;
       });
     } catch (error) {
       log("Argh! " + error);
     }
   });
 
-  writeButton.addEventListener("click", async () => {
+  writeTag.addEventListener("click", async () => {
     log("User clicked write button");
-
-    try {
-      const ndef = new NDEFReader();
-      await ndef.write("Hello world!");
-      log("> Message written");
-    } catch (error) {
-      log("Argh! " + error);
+    if (serialID == "")
+    {
+      log("> Missing Serial ID, read tag first");
+    }
+    else
+    {
+      try {
+        const ndef = new NDEFReader();
+        await ndef.write("Hello world!");
+        log("> Message written");
+        uuidv4_str = uuidv4();
+        await ndef.write({
+            records: [
+              {
+                recordType: "url",
+                data: "https://electronworkshop.com.au/?utype=nfc&uid="+serialID+"&UUID="+uuidv4_str
+              }
+            ]
+          });
+        console.log("NFC tag written.");
+        serialID = "";
+      } catch (error) {
+        log("Argh! " + error);
+      }
     }
   });
-
-  makeReadOnlyButton.addEventListener("click", async () => {
-    log("User clicked make read-only button");
-
-    try {
-      const ndef = new NDEFReader();
-      await ndef.makeReadOnly();
-      log("> NFC tag has been made permanently read-only");
-    } catch (error) {
-      log("Argh! " + error);
-    }
-  });
-
 
 </script>
