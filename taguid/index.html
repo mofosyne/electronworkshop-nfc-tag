@@ -98,7 +98,7 @@ Card Emulation (HCE) are not supported within the current scope.
         serialID = "";
         await scanRequest();
       } catch (error) {
-        log(`> ------------------- WRITING -----------------------`);
+        log(`> ------------------- WRITING ERR -----------------------`);
         log("Argh! " + error);
         serialID = "";
       }
@@ -112,7 +112,7 @@ Card Emulation (HCE) are not supported within the current scope.
       log("> Scan started");
 
       ndef.addEventListener("readingError", () => {
-        log(`> ----------------- READING -----------------------`);
+        log(`> ----------------- READING ERR -----------------------`);
         log("Argh! Cannot read data from the NFC tag. Try another one?");
       });
 
@@ -158,7 +158,7 @@ Card Emulation (HCE) are not supported within the current scope.
         }
       });
     } catch (error) {
-      log(`> ----------------- READING -----------------------`);
+      log(`> ----------------- READING ERR -----------------------`);
       log("Argh! " + error);
     }
   }
