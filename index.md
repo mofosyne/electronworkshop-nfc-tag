@@ -1,4 +1,4 @@
-This is from https://github.com/GoogleChrome/samples/blob/gh-pages/web-nfc/index.js but modified to write to tags
+This is from https://github.com/GoogleChrome/samples/blob/gh-pages/web-nfc/index.js but modified to write to tags. Example page at https://googlechrome.github.io/samples/web-nfc/
 
 Used this resource to figure how the api https://github.com/w3c/web-nfc/blob/gh-pages/EXPLAINER.md
 
