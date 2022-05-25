@@ -144,14 +144,14 @@ Card Emulation (HCE) are not supported within the current scope.
               log("readLog", `Record not handled`);
           }
         }
-        if (forceWrite || (message.records.length == 0) || (lastSerialID = serialID))
+        if (forceWrite || (message.records.length == 0) || (lastSerialID != serialID))
         {
           forceWrite = false;
           writeRequest();
         }
         else if (!forceWrite)
         {
-          if (lastSerialID = serialID)
+          if (lastSerialID == serialID)
           {
             log(`> Already Written To Same Tag`);
           }
