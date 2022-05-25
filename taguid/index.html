@@ -117,7 +117,7 @@ Card Emulation (HCE) are not supported within the current scope.
       });
 
       ndef.addEventListener("reading", ({ message, serialNumber }) => {
-        if (lastSerialID != serialID)
+        if (lastSerialID != serialNumber)
         {
           log(`> ----------------- READING -----------------------`);
           log(`> Serial Number: ${serialNumber}`);
