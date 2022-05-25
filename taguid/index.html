@@ -85,7 +85,7 @@ Card Emulation (HCE) are not supported within the current scope.
         const ndef = new NDEFReader();
         uuid = uuidv4();
         //urlStr = "https://electronworkshop.com.au/?utype=nfc&uid="+serialID+"&UUID="+uuid;
-        urlStr = "https://electronworkshop.com.au/?uid="+serialID+"&utc="+Date()
+        urlStr = "https://electronworkshop.com.au/?uid="+serialID+"&utc="+Date.now().toString()
         log("> Written " + urlStr);
         await ndef.write({
             records: [
