@@ -14,8 +14,8 @@ format. Low-level I/O operations (e.g. ISO-DEP, NFC-A/B, NFC-F) and Host-based
 Card Emulation (HCE) are not supported within the current scope.
 </p>
 
-<button id="scanTag">ScanTag</button>
-<button id="writeTag">WriteTag</button>
+<button id="scanAndWriteTag">ScanAndWriteTag</button>
+<button id="forceWriteTag">ForceWriteTag</button>
 
 <h3>Live Output</h3>
 <div id="output" class="output">
@@ -64,20 +64,26 @@ Card Emulation (HCE) are not supported within the current scope.
 
   ////////////////////////////////////////
   var serialID = "";
+  var forceWrite = false;
+
+  async function forceWriteRequest(){
+    forceWrite = true;
+  }
 
   async function writeRequest(){
     if (serialID == "")
     {
       log("> Missing Serial ID, read tag first");
+      await scanRequest();
     }
     else
     {
+      log(`> ------------------- WRITING -----------------------`);
       try {
         const ndef = new NDEFReader();
         uuid = uuidv4();
         //urlStr = "https://electronworkshop.com.au/?utype=nfc&uid="+serialID+"&UUID="+uuid;
         urlStr = "https://electronworkshop.com.au/?utype=nfc&uid="+serialID
-        log(`> ----------------------------------------------------`);
         log("> Written " + urlStr);
         await ndef.write({
             records: [
@@ -88,27 +94,28 @@ Card Emulation (HCE) are not supported within the current scope.
             ]
           });
         console.log("NFC tag written.");
+        serialID = "";
+        await scanRequest();
       } catch (error) {
         log("Argh! " + error);
+        serialID = "";
       }
-      serialID = "";
-      scanRequest();
     }
   }
 
   async function scanRequest(){
-    log("User clicked scan button");
     try {
       const ndef = new NDEFReader();
       await ndef.scan();
       log("> Scan started");
 
-      ndef.addEventListener("readingerror", () => {
+      ndef.addEventListener("readingError", () => {
+        log(`> ----------------- READING -----------------------`);
         log("Argh! Cannot read data from the NFC tag. Try another one?");
       });
 
       ndef.addEventListener("reading", ({ message, serialNumber }) => {
-        log(`> ----------------------------------------------------`);
+        log(`> ----------------- READING -----------------------`);
         log(`> Serial Number: ${serialNumber}`);
         log(`> Records: (${message.records.length})`);
         serialID = serialNumber;
@@ -135,7 +142,14 @@ Card Emulation (HCE) are not supported within the current scope.
               log("readLog", `Record not handled`);
           }
         }
-        writeRequest();
+        if (forceWrite || message.records.length == 0)
+        {
+          writeRequest();
+        }
+        else if (!forceWrite)
+        {
+          log(`> Tag Not Empty`);
+        }
       });
 
     } catch (error) {
@@ -143,7 +157,9 @@ Card Emulation (HCE) are not supported within the current scope.
     }
   }
 
-  scanTag.addEventListener("click", scanRequest);
-  writeTag.addEventListener("click", writeRequest);
+  scanAndWriteTag.addEventListener("click", scanRequest);
+  forceWriteTag.addEventListener("click", forceWriteRequest);
 
+  // Just start immediately
+  scanRequest();
 </script>
