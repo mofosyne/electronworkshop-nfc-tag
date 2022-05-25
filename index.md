@@ -5,3 +5,5 @@ Used this resource to figure how the api https://github.com/w3c/web-nfc/blob/gh-
 [write using tag uid](./taguid/index.html)
 
 [write using uuidv4](./taguuidv4/index.html)
+
+[mass read tags](./tagread/index.html)
