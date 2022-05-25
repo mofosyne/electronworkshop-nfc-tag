@@ -78,6 +78,7 @@ Card Emulation (HCE) are not supported within the current scope.
       });
 
       ndef.addEventListener("reading", ({ message, serialNumber }) => {
+        log(`> ----------------------------------------------------`);
         log(`> Serial Number: ${serialNumber}`);
         log(`> Records: (${message.records.length})`);
         serialID = serialNumber;
@@ -122,13 +123,15 @@ Card Emulation (HCE) are not supported within the current scope.
       try {
         const ndef = new NDEFReader();
         await ndef.write("Hello world!");
-        log("> Message written");
-        uuidv4_str = uuidv4();
+        uuid = uuidv4();
+        urlStr = "https://electronworkshop.com.au/?utype=nfc&uid="+serialID+"&UUID="+uuid;
+        log(`> ----------------------------------------------------`);
+        log("> Written " + urlStr);
         await ndef.write({
             records: [
               {
                 recordType: "url",
-                data: "https://electronworkshop.com.au/?utype=nfc&uid="+serialID+"&UUID="+uuidv4_str
+                data: urlStr
               }
             ]
           });
