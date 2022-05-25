@@ -113,35 +113,27 @@ Card Emulation (HCE) are not supported within the current scope.
   });
 
   writeTag.addEventListener("click", async () => {
-    log("User clicked write button");
-    if (serialID == "")
-    {
-      log("> Missing Serial ID, read tag first");
-    }
-    else
-    {
-      try {
-        const ndef = new NDEFReader();
-        await ndef.write("Hello world!");
-        uuid = uuidv4();
-        //urlStr = "https://electronworkshop.com.au/?utype=nfc&uid="+serialID+"&UUID="+uuid;
-        //urlStr = "https://electronworkshop.com.au/?utype=nfc&uid="+serialID
-        urlStr = "https://electronworkshop.com.au/?utype=nfc&uuid="+uuid;
-        log(`> ----------------------------------------------------`);
-        log("> Written " + urlStr);
-        await ndef.write({
-            records: [
-              {
-                recordType: "url",
-                data: urlStr
-              }
-            ]
-          });
-        console.log("NFC tag written.");
-      } catch (error) {
-        log("Argh! " + error);
-      }
-      serialID = "";
+  log("User clicked write button");
+    try {
+      const ndef = new NDEFReader();
+      await ndef.write("Hello world!");
+      uuid = uuidv4();
+      //urlStr = "https://electronworkshop.com.au/?utype=nfc&uid="+serialID+"&UUID="+uuid;
+      //urlStr = "https://electronworkshop.com.au/?utype=nfc&uid="+serialID
+      urlStr = "https://electronworkshop.com.au/?utype=nfc&uuid="+uuid;
+      log(`> ----------------------------------------------------`);
+      log("> Written " + urlStr);
+      await ndef.write({
+          records: [
+            {
+              recordType: "url",
+              data: urlStr
+            }
+          ]
+        });
+      console.log("NFC tag written.");
+    } catch (error) {
+      log("Argh! " + error);
     }
   });
 
