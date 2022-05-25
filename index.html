@@ -77,18 +77,18 @@ Card Emulation (HCE) are not supported within the current scope.
         log(`>: message.records: (${message.records})`);
         log(`>: message: (${message})`);
 
-        await ndef.write({
-          records: [
-            {
-              recordType: "url",
-              data: "https://electronworkshop.com.au/?utype=nfc&uid="+serialNumber
-            },
-            {
-              recordType: "text", data: "Electron Workshop - Tech Collective"
-            }
-          ]
-        });
-        console.log("NFC tag written.");
+        //await ndef.write({
+        //  records: [
+        //    {
+        //      recordType: "url",
+        //      data: "https://electronworkshop.com.au/?utype=nfc&uid="+serialNumber
+        //    },
+        //    {
+        //      recordType: "text", data: "Electron Workshop - Tech Collective"
+        //    }
+        //  ]
+        //});
+        //console.log("NFC tag written.");
       });
     } catch (error) {
       log("Argh! " + error);
