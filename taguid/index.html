@@ -80,26 +80,25 @@ Card Emulation (HCE) are not supported within the current scope.
     }
     else
     {
-      log(`> ------------------- WRITING -----------------------`);
       try {
         const ndef = new NDEFReader();
-        uuid = uuidv4();
-        //urlStr = "https://electronworkshop.com.au/?utype=nfc&uid="+serialID+"&UUID="+uuid;
         urlStr = "https://electronworkshop.com.au/?uid="+serialID+"&utc="+Date.now().toString()
-        log("> Written " + urlStr);
         await ndef.write({
-            records: [
-              {
-                recordType: "url",
-                data: urlStr
-              }
-            ]
-          });
+          records: [
+            {
+              recordType: "url",
+              data: urlStr
+            }
+          ]
+        });
+        log(`> ------------------- WRITING -----------------------`);
+        log("> Written " + urlStr);
         console.log("NFC tag written.");
         lastSerialID = serialID;
         serialID = "";
         await scanRequest();
       } catch (error) {
+        log(`> ------------------- WRITING -----------------------`);
         log("Argh! " + error);
         serialID = "";
       }
@@ -145,7 +144,7 @@ Card Emulation (HCE) are not supported within the current scope.
               log("readLog", `Record not handled`);
           }
         }
-        if (forceWrite || (message.records.length == 0) || (lastSerialID != serialID))
+        if (forceWrite || (message.records.length == 0))
         {
           forceWrite = false;
           writeRequest();
