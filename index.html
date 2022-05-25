@@ -71,25 +71,27 @@ Card Emulation (HCE) are not supported within the current scope.
         log("Argh! Cannot read data from the NFC tag. Try another one?");
       });
 
+      serialID = "";
+
       ndef.addEventListener("reading", ({ message, serialNumber }) => {
         log(`> Serial Number: ${serialNumber}`);
         log(`> Records: (${message.records.length})`);
-        log(`>: message.records: (${message.records})`);
-        log(`>: message: (${message})`);
-
-        //await ndef.write({
-        //  records: [
-        //    {
-        //      recordType: "url",
-        //      data: "https://electronworkshop.com.au/?utype=nfc&uid="+serialNumber
-        //    },
-        //    {
-        //      recordType: "text", data: "Electron Workshop - Tech Collective"
-        //    }
-        //  ]
-        //});
-        //console.log("NFC tag written.");
+        serialID = serialNumber;
       });
+
+      await ndef.write({
+          records: [
+            {
+              recordType: "url",
+              data: "https://electronworkshop.com.au/?utype=nfc&uid="+serialID
+            },
+            {
+              recordType: "text", data: "Electron Workshop - Tech Collective"
+            }
+          ]
+        });
+      console.log("NFC tag written.");
+
     } catch (error) {
       log("Argh! " + error);
     }
