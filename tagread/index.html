@@ -64,9 +64,7 @@ Card Emulation (HCE) are not supported within the current scope.
   ////////////////////////////////////////
   var serialID = [];
 
-  scanTag.addEventListener("click", async () => {
-    log("User clicked scan button");
-
+  async function scanStartRequest(){
     try {
       const ndef = new NDEFReader();
       await ndef.scan();
@@ -83,34 +81,36 @@ Card Emulation (HCE) are not supported within the current scope.
           switch (record.recordType) {
             case "text":
               const textDecoder = new TextDecoder(record.encoding);
-              content = `TXT(${record.lang}): ${decoder.decode(record.data)}`;
+              content = `"TXT(${record.lang})":"${decoder.decode(record.data)}"`;
               break;
             case "url":
-              log("readLog", `URL: ${decoder.decode(record.data)}`);
-              content = `URL: ${decoder.decode(record.data)}`;
+              content = `"URL":"${decoder.decode(record.data)}"`;
               break;
             case "mime":
               if (record.mediaType === "application/json") {
-                content = `mime(application/json): ${JSON.parse(decoder.decode(record.data))}`;
+                content = `"mime(application/json)":"${JSON.parse(decoder.decode(record.data))}"`;
               } else {
-                content = `mime(?): Media not handled`;
+                content = `"mime(?)":"Media not handled"`;
               }
               break;
             default:
-              content = `record(?): Record not handled`;
+              content = `"record(?)":"Record not handled"`;
           }
 
         if (!serialID.includes(serialNumber))
         {
           serialID.push(serialNumber);
-          log(`UID: ${serialNumber}, ${content}`);
+          log(`{"UID": "${serialNumber}"", ${content}},`);
         }
         }
       });
 
     } catch (error) {
-      log("Argh! " + error);
+      //log("Argh! " + error);
     }
-  });
+  }
 
+  scanTag.addEventListener("click", scanStartRequest);
+
+  scanStartRequest();
 </script>
