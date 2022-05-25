@@ -96,6 +96,9 @@ Card Emulation (HCE) are not supported within the current scope.
         console.log("NFC tag written.");
         lastSerialID = serialID;
         serialID = "";
+
+        forceWrite = false;
+
         await scanRequest();
       } catch (error) {
         log(`> ------------------- WRITING ERR -----------------------`);
@@ -152,7 +155,6 @@ Card Emulation (HCE) are not supported within the current scope.
             {
               log(`> Forcing Write`);
             }
-            forceWrite = false;
             writeRequest();
           }
           else
