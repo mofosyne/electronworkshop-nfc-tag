@@ -120,7 +120,7 @@ Card Emulation (HCE) are not supported within the current scope.
         if (lastSerialID != serialNumber)
         {
           log(`> ----------------- READING -----------------------`);
-          log(`> Serial Number: ${serialNumber}`);
+          log(`> Serial Number: ${serialNumber} (last ID: ${lastSerialID})`);
           log(`> Records: (${message.records.length})`);
           serialID = serialNumber;
           const decoder = new TextDecoder();
