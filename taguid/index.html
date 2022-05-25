@@ -146,6 +146,7 @@ Card Emulation (HCE) are not supported within the current scope.
         }
         if (forceWrite || (message.records.length == 0) || (lastSerialID = serialID))
         {
+          forceWrite = false;
           writeRequest();
         }
         else if (!forceWrite)
