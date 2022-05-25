@@ -63,6 +63,7 @@ Card Emulation (HCE) are not supported within the current scope.
     ChromeSamples.setStatus("Web NFC is not available. Use Chrome on Android.");
 
   ////////////////////////////////////////
+  var lastSerialID = "";
   var serialID = "";
   var forceWrite = false;
 
@@ -94,6 +95,7 @@ Card Emulation (HCE) are not supported within the current scope.
             ]
           });
         console.log("NFC tag written.");
+        lastSerialID = serialID;
         serialID = "";
         await scanRequest();
       } catch (error) {
@@ -142,13 +144,20 @@ Card Emulation (HCE) are not supported within the current scope.
               log("readLog", `Record not handled`);
           }
         }
-        if (forceWrite || message.records.length == 0)
+        if (forceWrite || (message.records.length == 0) || (lastSerialID = serialID))
         {
           writeRequest();
         }
         else if (!forceWrite)
         {
-          log(`> Tag Not Empty`);
+          if (lastSerialID = serialID)
+          {
+            log(`> Already Written To Same Tag`);
+          }
+          else
+          {
+            log(`> Tag Not Empty`);
+          }
         }
       });
 
