@@ -148,6 +148,10 @@ Card Emulation (HCE) are not supported within the current scope.
           }
           if (forceWrite || (message.records.length == 0))
           {
+            if (forceWrite)
+            {
+              log(`> Forcing Write`);
+            }
             forceWrite = false;
             writeRequest();
           }
