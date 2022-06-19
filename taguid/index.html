@@ -14,6 +14,12 @@ format. Low-level I/O operations (e.g. ISO-DEP, NFC-A/B, NFC-F) and Host-based
 Card Emulation (HCE) are not supported within the current scope.
 </p>
 
+<input type="text" name="tagDescription" list="tagDescription">
+    <datalist id="tagDescription">
+      <option value="retromelb">
+      <option value="888causeway">
+    </datalist>
+
 <button id="scanAndWriteTag">ScanAndWriteTag</button>
 <button id="forceWriteTag">ForceWriteTag</button>
 
@@ -81,7 +87,17 @@ Card Emulation (HCE) are not supported within the current scope.
     {
       try {
         const ndef = new NDEFReader();
-        urlStr = "https://electronworkshop.com.au/?uid="+serialID+"&utc="+Date.now().toString()
+        let urlStr = "";
+        let tagDesc = document.getElementById('tagDescription');
+        if (tagDesc)
+        {
+          urlStr = "https://electronworkshop.com.au/?ut=nfc&uid="+serialID+"&utc="+Date.now().toString()+"&desc="+encodeURIComponent(tagDesc)
+        }
+        else
+        {
+          urlStr = "https://electronworkshop.com.au/?ut=nfc&uid="+serialID+"&utc="+Date.now().toString()
+        }
+
         await ndef.write({
           records: [
             {
@@ -97,7 +113,6 @@ Card Emulation (HCE) are not supported within the current scope.
 
         forceWrite = false;
 
-        await scanRequest();
       } catch (error) {
         log(`> ------------------- WRITING ERR -----------------------`);
         log("Argh! " + error);
