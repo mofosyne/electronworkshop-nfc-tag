@@ -2,8 +2,16 @@ This is from https://github.com/GoogleChrome/samples/blob/gh-pages/web-nfc/index
 
 Used this resource to figure how the api https://github.com/w3c/web-nfc/blob/gh-pages/EXPLAINER.md
 
-[write using tag uid](./taguid/index.html)
+# Production
 
-[write using uuidv4](./taguuidv4/index.html)
+[write using tag uid](./production/taguid/index.html)
 
-[mass read tags](./tagread/index.html)
+[mass read tags](./production/tagread/index.html)
+
+# Experimental (WIP)
+
+[write using tag uid](./development/taguid/index.html)
+
+[write using uuidv4](./development/taguuidv4/index.html)
+
+[mass read tags](./development/tagread/index.html)
