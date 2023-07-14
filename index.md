@@ -2,6 +2,12 @@ This is from https://github.com/GoogleChrome/samples/blob/gh-pages/web-nfc/index
 
 Used this resource to figure how the api https://github.com/w3c/web-nfc/blob/gh-pages/EXPLAINER.md
 
+# Production - block unlock 2023
+
+[write using tag uid](./production-unlock23/taguid/index.html)
+
+[mass read tags](./production-unlock23/tagread/index.html)
+
 # Production
 
 [write using tag uid](./production/taguid/index.html)

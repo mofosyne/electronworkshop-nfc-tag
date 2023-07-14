@@ -1,0 +1,176 @@
+---
+feature_name: Web NFC
+chrome_version: 89
+feature_id: 6261030015467520
+check_min_version: true
+---
+
+<h3>Background</h3>
+<p>
+Web NFC aims to provide sites the ability to read and write to NFC tags when
+they are brought in close proximity to the user’s device (usually 5-10 cm, 2-4
+inches). The current scope is limited to NDEF, a lightweight binary message
+format. Low-level I/O operations (e.g. ISO-DEP, NFC-A/B, NFC-F) and Host-based
+Card Emulation (HCE) are not supported within the current scope.
+</p>
+
+<button id="scanAndWriteTag">ScanAndWriteTag</button>
+<button id="forceWriteTag">ForceWriteTag</button>
+
+<h3>Live Output</h3>
+<div id="output" class="output">
+  <div id="content"></div>
+  <div id="status"></div>
+  <pre id="log"></pre>
+</div>
+
+<script>
+
+    function uuidv4() {
+      return ([1e7]+-1e3+-4e3+-8e3+-1e11).replace(/[018]/g, c =>
+        (c ^ crypto.getRandomValues(new Uint8Array(1))[0] & 15 >> c / 4).toString(16)
+      );
+    }
+
+    var ChromeSamples = {
+      log: function() {
+        var line = Array.prototype.slice.call(arguments).map(function(argument) {
+          return typeof argument === 'string' ? argument : JSON.stringify(argument);
+        }).join(' ');
+
+        document.querySelector('#log').textContent += line + '\n';
+      },
+
+      clearLog: function() {
+        document.querySelector('#log').textContent = '';
+      },
+
+      setStatus: function(status) {
+        document.querySelector('#status').textContent = status;
+      },
+
+      setContent: function(newContent) {
+        var content = document.querySelector('#content');
+        while(content.hasChildNodes()) {
+          content.removeChild(content.lastChild);
+        }
+        content.appendChild(newContent);
+      }
+    };
+
+  log = ChromeSamples.log;
+
+  if (!("NDEFReader" in window))
+    ChromeSamples.setStatus("Web NFC is not available. Use Chrome on Android.");
+
+  ////////////////////////////////////////
+  var serialID = "";
+  var forceWrite = false;
+
+  async function forceWriteRequest(){
+    forceWrite = true;
+    await scanRequest();
+  }
+
+  async function writeRequest(){
+    if (serialID == "")
+    {
+      log("> Missing Serial ID, read tag first");
+      await scanRequest();
+    }
+    else
+    {
+      try {
+        const ndef = new NDEFReader();
+        urlStr = "https://electronworkshop.com.au/?uid="+serialID+"&uuid="+uuidv4()+"&src=block-unlock-23"+"&utc="+Date.now().toString()
+        await ndef.write({
+          records: [
+            {
+              recordType: "url",
+              data: urlStr
+            }
+          ]
+        });
+        log(`> ------------------- WRITING -----------------------`);
+        log("> Written " + urlStr);
+        console.log("NFC tag written.");
+        serialID = "";
+
+        forceWrite = false;
+
+        await scanRequest();
+      } catch (error) {
+        log(`> ------------------- WRITING ERR -----------------------`);
+        log("Argh! " + error);
+        serialID = "";
+      }
+    }
+  }
+
+  async function scanRequest(){
+    try {
+      const ndef = new NDEFReader();
+      await ndef.scan();
+      log("> Scan started");
+
+      ndef.addEventListener("readingError", () => {
+        log(`> ----------------- READING ERR -----------------------`);
+        log("Argh! Cannot read data from the NFC tag. Try another one?");
+      });
+
+      ndef.addEventListener("reading", ({ message, serialNumber }) => {
+        if (serialID != serialNumber)
+        {
+          log(`> ----------------- READING -----------------------`);
+          log(`> Serial Number: ${serialNumber}`);
+          log(`> Records: (${message.records.length})`);
+          const decoder = new TextDecoder();
+          for (const record of message.records) {
+            switch (record.recordType) {
+              case "text":
+                const textDecoder = new TextDecoder(record.encoding);
+                log(`Text: ${textDecoder.decode(record.data)} (${record.lang})`
+                );
+                break;
+              case "url":
+                log("readLog", `URL: ${decoder.decode(record.data)}`);
+                break;
+              case "mime":
+                if (record.mediaType === "application/json") {
+                  log(`JSON: ${JSON.parse(decoder.decode(record.data))}`
+                  );
+                } else {
+                  log("readLog", `Media not handled`);
+                }
+                break;
+              default:
+                log("readLog", `Record not handled`);
+            }
+          }
+        }
+        serialID = serialNumber;
+        if (forceWrite || (message.records.length == 0))
+        {
+          if (forceWrite)
+          {
+            log(`> Forcing Write`);
+          }
+          writeRequest();
+        }
+        else
+        {
+          log(`> Tag Not Empty`);
+        }
+      });
+    } catch (error) {
+      log(`> ----------------- READING ERR -----------------------`);
+      log("Argh! " + error);
+    }
+  }
+
+  scanAndWriteTag.addEventListener("click", scanRequest);
+  forceWriteTag.addEventListener("click", forceWriteRequest);
+
+  // Just start immediately
+  scanRequest();
+</script>
