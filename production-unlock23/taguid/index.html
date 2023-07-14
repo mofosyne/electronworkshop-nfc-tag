@@ -82,7 +82,8 @@ Card Emulation (HCE) are not supported within the current scope.
     {
       try {
         const ndef = new NDEFReader();
-        urlStr = "https://electronworkshop.com.au/?uid="+serialID+"&uuid="+uuidv4()+"&src=unlock23"+"&utc="+Date.now().toString()
+        //urlStr = "https://electronworkshop.com.au/?uid="+serialID+"&uuid="+uuidv4()+"&src=unlock23"+"&utc="+Date.now().toString()
+        urlStr = "https://electronworkshop.com.au/?uuid="+uuidv4()+"&src=unlock23"+"&utc="+Date.now().toString()
         await ndef.write({
           records: [
             {
