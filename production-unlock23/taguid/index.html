@@ -26,12 +26,14 @@ Card Emulation (HCE) are not supported within the current scope.
 
 <script>
 
+  // https://stackoverflow.com/questions/45209269/create-guid-in-typescript-function-is-valid-in-js-but-not-ts
   function uuidv4() {
     return ([1e7]+-1e3+-4e3+-8e3+-1e11).replace(/[018]/g, c =>
       (c ^ crypto.getRandomValues(new Uint8Array(1))[0] & 15 >> c / 4).toString(16)
     );
   }
 
+  // https://stackoverflow.com/questions/1349404/generate-random-string-characters-in-javascript
   function makeid(length) {
     let result = '';
     const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
